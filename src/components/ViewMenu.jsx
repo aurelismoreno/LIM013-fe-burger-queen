@@ -12,6 +12,7 @@ const ViewMenu = ({
   addItem,
   deleteItem,
   emptyItems,
+  reduceCantidad,
 }) => (
   <>
     <Row>
@@ -29,6 +30,8 @@ const ViewMenu = ({
           setItems={setItems}
           deleteItem={deleteItem}
           emptyItems={emptyItems}
+          reduceCantidad={reduceCantidad}
+          addItem={addItem}
         />
       </Col>
     </Row>
@@ -36,6 +39,7 @@ const ViewMenu = ({
 );
 
 ViewMenu.propTypes = {
+  reduceCantidad: PropTypes.node.isRequired,
   items: PropTypes.node.isRequired,
   setItems: PropTypes.node.isRequired,
   addItem: PropTypes.node.isRequired,

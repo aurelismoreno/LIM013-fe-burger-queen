@@ -11,9 +11,12 @@ import { faPlusCircle, faMinusCircle, faTimesCircle } from '@fortawesome/free-so
 
 const DetailsOrder = ({
   items,
+  addItem,
   setItems,
   deleteItem,
   emptyItems,
+  reduceCantidad,
+  elevateCantidad,
 }) => (
   <>
     <section id="detailsOrder" className="padded">
@@ -75,12 +78,14 @@ const DetailsOrder = ({
               items.length > 0
                 ? items.map((item) => (
                   <tr key={item.idItem}>
-                    <th>
-                      <FontAwesomeIcon icon={faPlusCircle} />
+                    <th className="btn-cantidad">
+                      {' '}
+                      <FontAwesomeIcon icon={faPlusCircle} onClick={() => addItem(item.idMenu, item.descripcion, item.precio)} />
                       {' '}
                       {item.cantidad}
                       {' '}
-                      <FontAwesomeIcon icon={faMinusCircle} />
+                      {' '}
+                      <FontAwesomeIcon icon={faMinusCircle} onClick={() => reduceCantidad(item.idMenu)} />
                     </th>
                     <th>
                       {' '}
@@ -103,9 +108,7 @@ const DetailsOrder = ({
 
                 : (
                   <tr>
-                    {' '}
-                    <th colSpan="5">Aun no hay productos</th>
-                    {' '}
+                    <th colSpan="5"> Aun no hay productos </th>
                   </tr>
                 )
 }
@@ -113,12 +116,8 @@ const DetailsOrder = ({
           <tfoot>
             {' '}
             <tr>
-              <th>
-                {' '}
-              </th>
-              <th>
-                {' '}
-              </th>
+              <th> </th>
+              <th> </th>
               <th>Total:</th>
               <th colSpan="2">
                 {'S/. '}
@@ -147,7 +146,10 @@ const DetailsOrder = ({
   </>
 );
 DetailsOrder.propTypes = {
+  reduceCantidad: PropTypes.node.isRequired,
+  elevateCantidad: PropTypes.node.isRequired,
   items: PropTypes.node.isRequired,
+  addItem: PropTypes.node.isRequired,
   setItems: PropTypes.node.isRequired,
   deleteItem: PropTypes.node.isRequired,
   emptyItems: PropTypes.node.isRequired,
