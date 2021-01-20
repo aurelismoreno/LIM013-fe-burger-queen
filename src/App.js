@@ -152,6 +152,36 @@ function App() {
     newItems.splice(0, items.length); // Eliminamos todos los elementos
     setItems(newItems); // Actualizamos datos
   };
+  // Reduce Cantidad:
+  const reduceCantidad = (idAdd) => {
+    // console.log(idAdd);
+    const newItems = [...items];
+    const existItem = (newItems.filter((item) => item.idMenu === idAdd).length) > 0;
+    console.log(existItem);
+    if (existItem) { // Ya existe id registrado:
+      newItems.forEach((itemPedido, index) => {
+        if (itemPedido.idMenu === idAdd) { // Buscamos coincidencia:
+          const cantidadItem = (newItems[index].cantidad) - 1;
+          const totalItem = cantidadItem * newItems[index].precio;
+          newItems[index] = {
+            idItem: newItems[index].idItem,
+            idMenu: idAdd,
+            descripcion: newItems[index].descripcion,
+            cantidad: cantidadItem,
+            precio: newItems[index].precio,
+            total: totalItem,
+          };
+          // console.log(newItems[index].cantidad);
+          if (newItems[index].cantidad === 0) {
+            newItems.splice(index, 1); // Eliminamos el Item con el valor del index
+            // setItems(newItems); // Actualizamos datos
+          }
+        }
+      });
+    }
+    setItems(newItems);
+  };
+
   return (
     <Container fluid id="containerRoot">
       <BrowserRouter>
@@ -167,6 +197,7 @@ function App() {
               addItem={addItem}
               deleteItem={deleteItem}
               emptyItems={emptyItems}
+              reduceCantidad={reduceCantidad}
             />
           </Route>
           <Route path="/" exact>
@@ -179,6 +210,7 @@ function App() {
               addItem={addItem}
               deleteItem={deleteItem}
               emptyItems={emptyItems}
+              reduceCantidad={reduceCantidad}
             />
           </Route>
           <Route path="/pedidos" component={ViewPedidos} />
