@@ -118,7 +118,7 @@ text-align: left;
 
 table tr th:first-child,
 table tr td:first-child{
-text-align: center;
+text-align: none;
 }
 
 table tr th:nth-child(4),
@@ -197,5 +197,18 @@ img.img-fluid.img-thumbnail {
 }
 
 .btn-cantidad{
-  font-size: 30px;
+  font-size: 25px;
+}
+
+.table-bordered td, .table-bordered th {
+  border: 0px ! important;
+}
+
+
+/*  media query */
+@media(min-width:1051px){
+  table tr th:first-child,
+table tr td:first-child{
+text-align: center;
+}
 }
