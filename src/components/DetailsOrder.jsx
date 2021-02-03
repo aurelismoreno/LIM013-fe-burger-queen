@@ -17,64 +17,78 @@ const DetailsOrder = ({
   emptyItems,
   reduceCantidad,
   elevateCantidad,
-}) => (
-  <>
-    <section id="detailsOrder" className="padded">
-      <div className="container">
-        <h2>Resumen de Pedido</h2>
-      </div>
-    </section>
+  enviarItems,
+  cliente,
+  setCliente,
+  mesa,
+  setMesa,
+}) => {
+  const sumaTotal = () => {
+    let total = 0;
+    items.forEach((value) => {
+      total += value.total;
+    });
+    return total;
+  };
+  console.log(sumaTotal());
+  return (
+    <>
+      <section id="detailsOrder" className="padded">
+        <div className="container">
+          <h2>Resumen de Pedido</h2>
+        </div>
+      </section>
 
-    <section id="formOrder" className="padded">
-      <div className="container h-100">
-        <div className="d-flex h-100">
-          <div className="align-self-center mx-auto">
-            <Form Fluid>
-              <Form.Group controlId="exampleForm.ControlInput1">
-                {/* <Form.Label>Cliente</Form.Label> */}
-                <Form.Control type="text" placeholder="Cliente" />
-              </Form.Group>
-              <Form.Group controlId="exampleForm.ControlSelect1">
-                <Form.Label>
-                  Mesa:
-                </Form.Label>
-                <Form.Control as="select">
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-                  <option>9</option>
-                  <option>10</option>
-                </Form.Control>
-              </Form.Group>
-            </Form>
+      <section id="formOrder" className="padded">
+        <div className="container h-100">
+          <div className="d-flex h-100">
+            <div className="align-self-center mx-auto">
+              <Form Fluid>
+                <Form.Group controlId="exampleForm.ControlInput1">
+                  {/* <Form.Label>Cliente</Form.Label> */}
+                  <Form.Control type="text" placeholder="Cliente" onChange={(e) => setCliente(e.target.value)} value={cliente} />
+                </Form.Group>
+                <Form.Group controlId="exampleForm.ControlSelect1">
+                  <Form.Label>
+                    Mesa:
+                  </Form.Label>
+                  <Form.Control as="select" onChange={(e) => setMesa(e.target.value)} value={mesa}>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </Form.Control>
+                </Form.Group>
+              </Form>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="listOrder" className="padded">
-      <div className="container">
-        <Table responsive="md" className="table-striped table-bordered table-hover">
-          <thead>
-            <tr>
-              <th>Cantidad</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Total</th>
-              <th>
-                {' '}
-                {' '}
-                {' '}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {
+      <section id="listOrder" className="padded">
+        <div className="container">
+          <Table responsive="md" className="table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Cantidad</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Total</th>
+                <th>
+                  {' '}
+                  {' '}
+                  {' '}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
               items.length > 0
                 ? items.map((item) => (
                   <tr key={item.idItem}>
@@ -112,39 +126,40 @@ const DetailsOrder = ({
                   </tr>
                 )
 }
-          </tbody>
-          <tfoot>
-            {' '}
-            <tr>
-              <th> </th>
-              <th> </th>
-              <th>Total:</th>
-              <th colSpan="2">
-                {'S/. '}
-                {items.reduce((prev, next) => prev + next.total, 0)}
-              </th>
-            </tr>
-          </tfoot>
-        </Table>
-      </div>
-    </section>
+            </tbody>
+            <tfoot>
+              {' '}
+              <tr>
+                <th> </th>
+                <th> </th>
+                <th>Total:</th>
+                <th colSpan="2">
+                  {'S/. '}
+                  {sumaTotal()}
+                </th>
+              </tr>
+            </tfoot>
+          </Table>
+        </div>
+      </section>
 
-    <section id="btnOrderMenu" className="padded">
-      <div className="container  h-100">
-        <div className="d-flex h-100">
-          <div className="align-self-center mx-auto">
-            <Button variant="primary" size="lg" onClick={() => emptyItems()}>
-              Vaciar
-            </Button>
-            <Button variant="secondary" size="lg">
-              Enviar
-            </Button>
+      <section id="btnOrderMenu" className="padded">
+        <div className="container  h-100">
+          <div className="d-flex h-100">
+            <div className="align-self-center mx-auto">
+              <Button variant="primary" size="lg" onClick={() => emptyItems()}>
+                Vaciar
+              </Button>
+              <Button variant="secondary" size="lg" onClick={() => enviarItems()}>
+                Enviar
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  </>
-);
+      </section>
+    </>
+  );
+};
 DetailsOrder.propTypes = {
   reduceCantidad: PropTypes.node.isRequired,
   elevateCantidad: PropTypes.node.isRequired,
@@ -153,5 +168,10 @@ DetailsOrder.propTypes = {
   setItems: PropTypes.node.isRequired,
   deleteItem: PropTypes.node.isRequired,
   emptyItems: PropTypes.node.isRequired,
+  enviarItems: PropTypes.node.isRequired,
+  cliente: PropTypes.node.isRequired,
+  setCliente: PropTypes.node.isRequired,
+  mesa: PropTypes.node.isRequired,
+  setMesa: PropTypes.node.isRequired,
 };
 export default DetailsOrder;

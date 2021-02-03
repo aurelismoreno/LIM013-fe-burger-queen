@@ -13,6 +13,7 @@
     "@zendeskgarden/react-tabs": "^8.29.2",
     "@zendeskgarden/react-theming": "^8.29.2",
     "bootstrap": "^4.5.3",
+    "firebase": "^8.2.3",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.3",
@@ -21,6 +22,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "styled-components": "^5.2.1",
+    "sweetalert2": "^10.13.0",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

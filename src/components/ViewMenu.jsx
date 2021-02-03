@@ -13,6 +13,11 @@ const ViewMenu = ({
   deleteItem,
   emptyItems,
   reduceCantidad,
+  enviarItems,
+  cliente,
+  setCliente,
+  mesa,
+  setMesa,
 }) => (
   <>
     <Row>
@@ -32,6 +37,11 @@ const ViewMenu = ({
           emptyItems={emptyItems}
           reduceCantidad={reduceCantidad}
           addItem={addItem}
+          enviarItems={enviarItems}
+          cliente={cliente}
+          setCliente={setCliente}
+          mesa={mesa}
+          setMesa={setMesa}
         />
       </Col>
     </Row>
@@ -46,6 +56,11 @@ ViewMenu.propTypes = {
   deleteItem: PropTypes.node.isRequired,
   emptyItems: PropTypes.node.isRequired,
   optionsMenu: PropTypes.node.isRequired,
+  enviarItems: PropTypes.node.isRequired,
+  cliente: PropTypes.node.isRequired,
+  setCliente: PropTypes.node.isRequired,
+  mesa: PropTypes.node.isRequired,
+  setMesa: PropTypes.node.isRequired,
 };
 
 export default ViewMenu;

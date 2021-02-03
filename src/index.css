@@ -204,7 +204,12 @@ img.img-fluid.img-thumbnail {
   border: 0px ! important;
 }
 
-
+.modalPedidosPorEntregar {
+  padding: 0rem 0rem;
+}
+.jumbotron {
+  padding: 2rem 2rem ! important;
+}
 /*  media query */
 @media(min-width:1051px){
   table tr th:first-child,

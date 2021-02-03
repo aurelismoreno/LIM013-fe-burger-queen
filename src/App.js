@@ -1,8 +1,11 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
+import Swal from 'sweetalert2';
+// import firebase from 'firebase';
+import db from './database';
+// import 'firebase/firestore';
 import ViewNavegacion from './components/ViewNavegacion';
 import ViewMenu from './components/ViewMenu';
 import ViewPedidos from './components/ViewPedidos';
@@ -11,72 +14,23 @@ import ViewPedidos from './components/ViewPedidos';
 // // import logo from './logo.svg';
 // import './App.css';
 function App() {
-  // db Comidas:
-  // const [optionsComidas, setOptionsComidas] = useState([
-  //   { id: 1, nombre: 'Hamburguesa Simple', precio: 10 },
-  //   { id: 2, nombre: 'Hamburguesa Doble', precio: 15 },
-  // ]);
-  // const [optionsBebidas, setOptionsBebidas] = useState([
-  //   { id: 1, nombre: 'Agua 500ml', precio: 5 },
-  //   { id: 2, nombre: 'Agua 750ml', precio: 7 },
-  //   { id: 3, nombre: 'Bebida 500ml', precio: 7 },
-  //   { id: 4, nombre: 'Bebida 750ml', precio: 10 },
-  //   { id: 3, nombre: 'Gaseosa 500ml', precio: 7 },
-  //   { id: 4, nombre: 'Gaseosa 750ml', precio: 10 },
-  // ]);
-  // const [optionsComplementos, setOptionsComplementos] = useState([
-  //   { id: 1, nombre: 'Papas fritas', precio: 5 },
-  //   { id: 2, nombre: 'Aros de cebolla', precio: 5 },
-  // ]);
-
   // db del Menu Completo:
-  const [optionsMenu, setOptionsMenu] = useState([
-    {
-      id: 1, descripcion: 'Hamburguesa Simple', precio: 10, tipo: 'Comida',
-    },
-    {
-      id: 2, descripcion: 'Hamburguesa Doble', precio: 15, tipo: 'Comida',
-    },
-    {
-      id: 3, descripcion: 'Agua 500ml', precio: 5, tipo: 'Bebida',
-    },
-    {
-      id: 4, descripcion: 'Agua 750ml', precio: 7, tipo: 'Bebida',
-    },
-    {
-      id: 5, descripcion: 'Bebida 500ml', precio: 7, tipo: 'Bebida',
-    },
-    {
-      id: 6, descripcion: 'Bebida 750ml', precio: 10, tipo: 'Bebida',
-    },
-    {
-      id: 7, descripcion: 'Gaseosa 500ml', precio: 7, tipo: 'Bebida',
-    },
-    {
-      id: 8, descripcion: 'Gaseosa 750ml', precio: 10, tipo: 'Bebida',
-    },
-    {
-      id: 9, descripcion: 'Papas fritas', precio: 5, tipo: 'Complemento',
-    },
-    {
-      id: 10, descripcion: 'Aros de cebolla', precio: 5, tipo: 'Complemento',
-    },
-  ]);
+  const [optionsMenu, setOptionsMenu] = useState([]);
+  useEffect(() => {
+    const getMenu = async () => {
+      try {
+        const data = await db.collection('menu').get();
+        // console.log(data.docs);
+        const arrayData = data.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        // console.log(arrayData);
+        setOptionsMenu(arrayData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  // Filtrar segun el (tipo) menu seleccionado:
-  // const menuSeleccionado = optionsMenu.filter((menu) => menu.tipo === 'Complemento');
-
-  // console.log(menuSeleccionado);
-
-  // pedidos:
-  // const [pedidos, setPedidos] = useState([
-  //   {
-  //     id: 1, cantidad: 2, nombre: 'Hamburguesa Simple', precio: 10, total: 20,
-  //   },
-  //   {
-  //     id: 2, cantidad: 1, nombre: 'Hamburguesa Doble', precio: 15, total: 15,
-  //   },
-  // ]);
+    getMenu();
+  }, []);
 
   // Traer lo almacenado en Local Storage
   const itemsLocalStorage = JSON.parse(localStorage.getItem('items') || '[]');
@@ -84,8 +38,9 @@ function App() {
   // idItem, Descripción, cantidad, precio, total
   const [items, setItems] = useState(itemsLocalStorage);
   // Pedidos:
-  // IdPed, cliente, Mesa, Estado
-  const [pedidos, setPedidos] = useState([]);
+  //  cliente, Mesa, Estado
+  const [cliente, setCliente] = useState('');
+  const [mesa, setMesa] = useState('');
 
   // Persist Data Local Storage:
   useEffect(() => {
@@ -108,20 +63,20 @@ function App() {
       const existItem = (newItems.filter((item) => item.idMenu === idAdd).length) > 0;
       console.log(existItem);
       if (existItem) { // Ya existe id registrado:
-        newItems.forEach((itemPedido, index) => {
+        newItems.map((itemPedido, index) => {
           if (itemPedido.idMenu === idAdd) { // Buscamos coincidencia:
-            const cantidadItem = (newItems[index].cantidad) + 1;
+            const cantidadItem = (newItems[index].cantidad) + 1; // Aumentamos
             const totalItem = cantidadItem * newItems[index].precio;
-            // console.log(cantidadDetPedido);
             newItems[index] = {
               idItem: newItems[index].idItem,
               idMenu: idAdd,
-              descripcion: descripcionAdd,
+              descripcion: newItems[index].descripcion,
               cantidad: cantidadItem,
-              precio: precioAdd,
+              precio: newItems[index].precio,
               total: totalItem,
             };
           }
+          return newItems[index];
         });
       } else { // Si no existe id, agregamos:
         newItems.push(
@@ -135,9 +90,11 @@ function App() {
           },
         );
       }
+
       setItems(newItems);
     }
   };
+
   // Eliminar:
   const deleteItem = (id) => {
     const newItems = [...items];
@@ -145,6 +102,7 @@ function App() {
     newItems.splice(index, 1); // Eliminamos el Item con el valor del index
     setItems(newItems); // Actualizamos datos
   };
+
   // Vaciar:
   const emptyItems = () => {
     // setItems([]);
@@ -152,6 +110,7 @@ function App() {
     newItems.splice(0, items.length); // Eliminamos todos los elementos
     setItems(newItems); // Actualizamos datos
   };
+
   // Reduce Cantidad:
   const reduceCantidad = (idAdd) => {
     // console.log(idAdd);
@@ -182,6 +141,114 @@ function App() {
     setItems(newItems);
   };
 
+  const [pedidos, setPedidos] = useState([]);
+  // const [getPedidos, setGetpedidos] = useState([]);
+  // Funcion enviar:
+  const enviarItems = () => {
+    const itemsFirebase = [];
+    items.forEach((value) => {
+      const item = {
+        idItem: value.idItem,
+        idMenu: value.idMenu,
+        descripcion: value.descripcion,
+        cantidad: value.cantidad,
+        precio: value.precio,
+        total: value.total,
+      };
+      itemsFirebase.push(item);
+    });
+
+    db.collection('pedidos').get().then((querySnapshot) => {
+      console.log('Tamaño:', querySnapshot.size);
+      console.log(typeof querySnapshot.size);
+      const nroPedido = (querySnapshot.size + 1).toString();
+
+      const newPedido = {
+        detalle: itemsFirebase,
+        total: items.reduce((prev, next) => prev + next.total, 0),
+        cliente,
+        mesa,
+        estado: 'Por Entregar',
+      };
+
+      db.collection('pedidos').doc(nroPedido).set(newPedido);
+
+      setPedidos([...pedidos, { ...newPedido, id: nroPedido }]); // Actualiza Datos.
+    });
+
+    Swal.fire(
+      'Perfecto',
+      'Pedido Enviado!',
+      'success',
+    );
+    emptyItems();
+  };
+
+  // Mostrar Pedidos:
+  // const [getPedidos, setGetpedidos] = useState([
+  //   // {
+  //   //   id: 1,
+  //   //   cliente: 'Juan',
+  //   //   detalle: [{
+  //   //     cantidad: 1,
+  //   //     descripcion: 'Hamburguesa Doble',
+  //   //     idItem: 1,
+  //   //     idMenu: 2,
+  //   //     precio: 15,
+  //   //     total: 15,
+  //   //   }],
+  //   //   mesa: '2',
+  //   //   total: 15,
+  //   //   estado: 'Por Entregar',
+  //   // },
+  //   // {
+  //   //   id: 2,
+  //   //   cliente: 'Sofia',
+  //   //   detalle: [{
+  //   //     cantidad: 1,
+  //   //     descripcion: 'Hamburguesa Simple',
+  //   //     idItem: 1,
+  //   //     idMenu: 1,
+  //   //     precio: 10,
+  //   //     total: 10,
+  //   //   }],
+  //   //   mesa: '3',
+  //   //   total: 10,
+  //   //   estado: 'Por Entregar',
+  //   // },
+  // ]);
+  useEffect(() => {
+    const getPedido = async () => {
+      try {
+        const data = await db.collection('pedidos').get();
+        // console.log(data.docs);
+        const arrayData = data.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        console.log(arrayData);
+        setPedidos(arrayData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getPedido();
+  }, []);
+
+  const updatePedido = (idPedido) => {
+    console.log(idPedido);
+
+    const newPedido = {
+      estado: 'Entregado',
+    };
+
+    db.collection('pedidos').doc(idPedido).update(newPedido);
+
+    setPedidos([{ ...newPedido }]); // Actualiza Datos.
+    Swal.fire(
+      'Perfecto',
+      'Pedido Entregado!',
+      'success',
+    );
+    emptyItems();
+  };
   return (
     <Container fluid id="containerRoot">
       <BrowserRouter>
@@ -190,30 +257,42 @@ function App() {
           <Route path="#" exact>
             <ViewMenu
               optionsMenu={optionsMenu}
-              pedidos={pedidos}
-              setPedidos={setPedidos}
               items={items}
               setItems={setItems}
               addItem={addItem}
               deleteItem={deleteItem}
               emptyItems={emptyItems}
               reduceCantidad={reduceCantidad}
+              enviarItems={enviarItems}
+              cliente={cliente}
+              setCliente={setCliente}
+              mesa={mesa}
+              setMesa={setMesa}
             />
           </Route>
           <Route path="/" exact>
             <ViewMenu
               optionsMenu={optionsMenu}
-              pedidos={pedidos}
-              setPedidos={setPedidos}
               items={items}
               setItems={setItems}
               addItem={addItem}
               deleteItem={deleteItem}
               emptyItems={emptyItems}
               reduceCantidad={reduceCantidad}
+              enviarItems={enviarItems}
+              cliente={cliente}
+              setCliente={setCliente}
+              mesa={mesa}
+              setMesa={setMesa}
             />
           </Route>
-          <Route path="/pedidos" component={ViewPedidos} />
+          <Route path="/pedidos">
+            <ViewPedidos
+              updatePedido={updatePedido}
+              pedidos={pedidos}
+              setPedidos={setPedidos}
+            />
+          </Route>
         </Switch>
       </BrowserRouter>
     </Container>
