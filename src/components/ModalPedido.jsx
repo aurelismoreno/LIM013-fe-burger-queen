@@ -83,18 +83,12 @@ const ModalPedido = ({
                 </tr>
               </thead>
               <tbody>
-                {/* {detalle.map((detalles) => (
+                {detalle.map((detalles) => (
                   <ViewDetallePedido
                     key={detalles.id}
                     detalles={detalles}
                   />
-                )) } */}
-                {/* {detalle.map((det) => (
-                  <ViewDetallePedido
-                    key={det.id}
-                    detalle={det}
-                  />
-                )) } */}
+                )) }
               </tbody>
               <tfoot>
                 <tr>
